@@ -760,3 +760,8 @@ bool WalletModel::isMine(CBitcoinAddress address)
 {
     return IsMine(*wallet, address.Get());
 }
+
+int WalletModel::GetActiveChainHeight() const
+{
+    return chainActive.Height();
+}

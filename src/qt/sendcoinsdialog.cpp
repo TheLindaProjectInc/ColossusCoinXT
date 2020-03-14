@@ -362,6 +362,14 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee,
     }
 
     CAmount txFee = currentTransaction.getTransactionFee();
+
+    const int64_t spork21 = GetSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE);
+    const int64_t spork21val = GetSporkValue(SPORK_22_TX_FEE_VALUE);
+    if (model->GetActiveChainHeight() >= spork21 && txFee < spork21val * COIN) {
+        QMessageBox::information(this, tr("Warning!"), tr("Min required fee is %1").arg(spork21val), QMessageBox::Ok);
+        return;
+    }
+
     QString questionString = tr("Are you sure you want to send?");
     questionString.append("<br /><br />%1");
 
