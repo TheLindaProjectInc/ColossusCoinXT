@@ -1,5 +1,5 @@
 ---
-name: "ColossusXT-win-1.2.2"
+name: "ColossusXT-win-1.2.3"
 enable_cache: true
 suites:
 - "trusty"
