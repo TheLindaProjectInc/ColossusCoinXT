@@ -362,6 +362,15 @@ void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee,
     }
 
     CAmount txFee = currentTransaction.getTransactionFee();
+
+    const int64_t spork21 = GetSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE);
+    const int64_t spork21val = GetSporkValue(SPORK_22_TX_FEE_VALUE);
+    if (model->GetActiveChainHeight() >= spork21 && txFee < spork21val * COIN) {
+        QMessageBox::information(this, tr("Warning!"),
+                                 tr("Network spam protection is on, please try sending again with minimum transaction fee of %1 COLX.").arg(spork21val), QMessageBox::Ok);
+        return;
+    }
+
     QString questionString = tr("Are you sure you want to send?");
     questionString.append("<br /><br />%1");
 

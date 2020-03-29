@@ -33,7 +33,8 @@ public:
     static const int32_t VERSION4 = 4; // new budget percent and masternode see-saw reward
     static const int32_t VERSION5 = 5; // zerocoins
     static const int32_t VERSION6 = 6; // enforce network update (single superblock + single dev fund payment + creation of 108M during 24month)
-    static const int32_t CURRENT_VERSION = VERSION6;
+    static const int32_t VERSION7 = 7; // just enforce network update to 1.2.3 to activate sporks asap
+    static const int32_t CURRENT_VERSION = VERSION7;
     int32_t nVersion;
     uint256 hashPrevBlock;
     uint256 hashMerkleRoot;
