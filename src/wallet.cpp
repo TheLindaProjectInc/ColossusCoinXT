@@ -2704,10 +2704,14 @@ bool CWallet::GetBudgetSystemCollateralTX(CWalletTx& tx, uint256 hash, int nBudg
     vector<pair<CScript, CAmount> > vecSend;
     vecSend.push_back(make_pair(scriptChange, nFeeRequired));
 
+    CAmount nFeePay = 0;
+    if (chainActive.Height() >= GetSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE))
+        nFeePay = GetSporkValue(SPORK_22_TX_FEE_VALUE) * COIN;
+
     CAmount nFeeRet = 0;
     std::string strFail = "";
     CCoinControl* coinControl = nullptr;
-    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, strFail, coinControl, ALL_COINS, useIX, (CAmount)0, false);
+    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, strFail, coinControl, ALL_COINS, useIX, nFeePay, false);
     if (!success) {
         LogPrintf("GetBudgetSystemCollateralTX: Error - %s\n", strFail);
         return false;
