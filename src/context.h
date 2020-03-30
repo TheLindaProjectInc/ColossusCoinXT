@@ -5,6 +5,8 @@
 #ifndef BITCOIN_CONTEXT_H
 #define BITCOIN_CONTEXT_H
 
+#include "sync.h"
+
 #include <set>
 #include <string>
 #include <memory>
@@ -114,6 +116,16 @@ public:
      */
     bool ConsensusBanActive(const std::string& addr) const;
 
+    /**
+     * Return list of banned addresses for consensus.
+     */
+    std::set<std::string> GetConsensusBanAddr() const;
+
+    /**
+     * Return list of banned addresses for mempool.
+     */
+    std::set<std::string> GetMempoolBanAddr() const;
+
 private:
     CContext();
     CContext(const CContext&);
@@ -124,6 +136,8 @@ private:
     int64_t nStartupTime_ = 0;
     BootstrapModelPtr bootstrapModel_;
     AutoUpdateModelPtr autoupdateModel_;
+
+    mutable CCriticalSection csBanAddr_;
     std::set<std::string> banAddrMempool_;
     std::set<std::string> banAddrConsensus_;
 };
