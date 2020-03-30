@@ -1651,7 +1651,7 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState& state, const CTransa
     }
 
     // ----------- banned transaction scanning -----------
-    if (GetContext().MempoolBanActive()) {
+    if (GetContext().MempoolBanActive() || GetContext().ConsensusBanActive()) {
         for (unsigned int i = 0; i < tx.vin.size(); ++i) {
             uint256 hashBlock;
             CTransaction txPrev;
@@ -1659,8 +1659,10 @@ bool AcceptToMemoryPool(CTxMemPool& pool, CValidationState& state, const CTransa
                 CTxDestination source;
                 if (ExtractDestination(txPrev.vout[tx.vin[i].prevout.n].scriptPubKey, source)) {  // extract the destination of the previous transaction's vout[n]
                     CBitcoinAddress addressSource(source);
-                    if (GetContext().MempoolBanActive(addressSource.ToString()))
+                    if (GetContext().MempoolBanActive(addressSource.ToString()) ||
+                            GetContext().ConsensusBanActive(addressSource.ToString(), chainActive.Height())) {
                         return error("%s : Banned address %s tried to send a transaction %s (rejecting it).", __func__, addressSource.ToString().c_str(), txPrev.GetHash().ToString().c_str());
+                    }
                 }
             }
         }
@@ -4712,7 +4714,7 @@ bool ContextualCheckBlock(const CBlock& block, CValidationState& state, CBlockIn
                     CTxDestination source;
                     if (ExtractDestination(txPrev.vout[tx.vin[i].prevout.n].scriptPubKey, source)) {  // extract the destination of the previous transaction's vout[n]
                         CBitcoinAddress addressSource(source);
-                        if (GetContext().ConsensusBanActive(addressSource.ToString()))
+                        if (GetContext().ConsensusBanActive(addressSource.ToString(), nHeight))
                             return state.DoS(100, error("%s : Banned address %s tried to send a transaction %s (rejecting it).", __func__, addressSource.ToString().c_str(), txPrev.GetHash().ToString().c_str()), REJECT_INVALID, "bad-txns-banned");
                     }
                 }

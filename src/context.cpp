@@ -5,6 +5,7 @@
 #include "context.h"
 #include "bootstrapmodel.h"
 #include "autoupdatemodel.h"
+#include "utilstrencodings.h"
 #include "timedata.h"
 #include "util.h"
 
@@ -39,9 +40,9 @@ CContext& GetContext()
 CContext::CContext()
 {
     nStartupTime_ = GetAdjustedTime();
-    banAddrConsensus_.insert("DSesymccyAQr6LjGLCHsvHzE41uKMk86XS"); // Cryptopia
-    banAddrConsensus_.insert("D5cNN2DThi3UUwS1hhedfx1UreXjMuxZPp"); // spammer
-    banAddrConsensus_.insert("DJB3pXt9Xuz7UTwPg4R8YtXB75gpNmkErD"); // spammer
+    banAddrConsensus_.insert(make_pair("DSesymccyAQr6LjGLCHsvHzE41uKMk86XS", 0)); // Cryptopia
+    banAddrConsensus_.insert(make_pair("D5cNN2DThi3UUwS1hhedfx1UreXjMuxZPp", 1297585)); // spammer
+    banAddrConsensus_.insert(make_pair("DJB3pXt9Xuz7UTwPg4R8YtXB75gpNmkErD", 1297585)); // spammer
 }
 
 CContext::~CContext() {}
@@ -77,42 +78,45 @@ void CContext::AddAddressToBan(
         const std::vector<std::string>& consensus)
 {
     LOCK(csBanAddr_);
+
     banAddrMempool_.insert(mempool.begin(), mempool.end());
-    banAddrConsensus_.insert(consensus.begin(), consensus.end());
+
+    for (const std::string& addr : consensus)
+    {
+        size_t pos = addr.find(':');
+        if (std::string::npos == pos)
+            banAddrConsensus_[addr] = 0;
+        else
+            banAddrConsensus_[addr.substr(0, pos)] = atoi(addr.substr(pos + 1));
+    }
 }
 
 bool CContext::MempoolBanActive() const
 {
-    std::set<std::string> banAddrMem = GetMempoolBanAddr();
-    return !banAddrMem.empty() || ConsensusBanActive();
+    LOCK(csBanAddr_);
+    return !banAddrMempool_.empty();
 }
 
 bool CContext::MempoolBanActive(const std::string& addr) const
 {
-    std::set<std::string> banAddrMem = GetMempoolBanAddr();
-    return banAddrMem.find(addr) != banAddrMem.end() || ConsensusBanActive(addr);
+    LOCK(csBanAddr_);
+    return banAddrMempool_.find(addr) != banAddrMempool_.end();
 }
 
 bool CContext::ConsensusBanActive() const
 {
-    std::set<std::string> banAddrCons = GetConsensusBanAddr();
-    return !banAddrCons.empty();
+    LOCK(csBanAddr_);
+    return !banAddrConsensus_.empty();
 }
 
-bool CContext::ConsensusBanActive(const std::string& addr) const
-{
-    std::set<std::string> banAddrCons = GetConsensusBanAddr();
-    return banAddrCons.find(addr) != banAddrCons.end();
-}
-
-std::set<std::string> CContext::GetConsensusBanAddr() const
+bool CContext::ConsensusBanActive(
+        const std::string& addr,
+        int height) const
 {
     LOCK(csBanAddr_);
-    return banAddrConsensus_;
-}
-
-std::set<std::string> CContext::GetMempoolBanAddr() const
-{
-    LOCK(csBanAddr_);
-    return banAddrMempool_;
+    auto iter = banAddrConsensus_.find(addr);
+    if (iter == banAddrConsensus_.end())
+        return false;
+    else
+        return height >= iter->second;
 }

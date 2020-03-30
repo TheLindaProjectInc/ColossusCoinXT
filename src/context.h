@@ -8,6 +8,7 @@
 #include "sync.h"
 
 #include <set>
+#include <map>
 #include <string>
 #include <memory>
 #include <vector>
@@ -89,6 +90,7 @@ public:
      * Add ColossusXT address to the ban list.
      * @param mempool list of ColossusXT address for mempool ban
      * @param consensus list of ColossusXT address for consensus ban
+     *                  in the format addr[:height], height=0 by default
      */
     void AddAddressToBan(
             const std::vector<std::string>& mempool,
@@ -106,25 +108,18 @@ public:
     bool MempoolBanActive(const std::string& addr) const;
 
     /**
-     * Return true if there is at least one address for banning.
+     * Return true if at least one address is banned.
      */
     bool ConsensusBanActive() const;
 
     /**
-     * Return true if given address is banned.
+     * Return true if given address is banned for give height.
      * @param addr ColossusXT address in base58 format
+     * @param height blockchain height for checking ban
      */
-    bool ConsensusBanActive(const std::string& addr) const;
-
-    /**
-     * Return list of banned addresses for consensus.
-     */
-    std::set<std::string> GetConsensusBanAddr() const;
-
-    /**
-     * Return list of banned addresses for mempool.
-     */
-    std::set<std::string> GetMempoolBanAddr() const;
+    bool ConsensusBanActive(
+            const std::string& addr,
+            int height) const;
 
 private:
     CContext();
@@ -139,7 +134,7 @@ private:
 
     mutable CCriticalSection csBanAddr_;
     std::set<std::string> banAddrMempool_;
-    std::set<std::string> banAddrConsensus_;
+    std::map<std::string, int> banAddrConsensus_;
 };
 
 #endif // BITCOIN_CONTEXT_H
