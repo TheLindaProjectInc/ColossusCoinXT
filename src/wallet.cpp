@@ -2704,14 +2704,10 @@ bool CWallet::GetBudgetSystemCollateralTX(CWalletTx& tx, uint256 hash, int nBudg
     vector<pair<CScript, CAmount> > vecSend;
     vecSend.push_back(make_pair(scriptChange, nFeeRequired));
 
-    CAmount nFeePay = 0;
-    if (chainActive.Height() >= GetSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE))
-        nFeePay = GetSporkValue(SPORK_22_TX_FEE_VALUE) * COIN;
-
     CAmount nFeeRet = 0;
     std::string strFail = "";
     CCoinControl* coinControl = nullptr;
-    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, strFail, coinControl, ALL_COINS, useIX, nFeePay, false);
+    bool success = CreateTransaction(vecSend, tx, reservekey, nFeeRet, strFail, coinControl, ALL_COINS, useIX, 0, false);
     if (!success) {
         LogPrintf("GetBudgetSystemCollateralTX: Error - %s\n", strFail);
         return false;
@@ -2748,17 +2744,23 @@ bool CWallet::CreateTransaction(const vector<pair<CScript, CAmount> >& vecSend,
     bool useLockTime)
 {
     // ZC999FIX: REVIEW: should this be minTxFee? but we need full tx before that
-    if (useIX && nFeePay < COIN) nFeePay = COIN;
+    if (useIX && nFeePay < COIN)
+        nFeePay = COIN;
+
+    if (chainActive.Height() >= GetSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE) &&
+            nFeePay < GetSporkValue(SPORK_22_TX_FEE_VALUE) * COIN) {
+        nFeePay = GetSporkValue(SPORK_22_TX_FEE_VALUE) * COIN;
+    }
 
     CAmount nValue = 0;
-
-    BOOST_FOREACH (const PAIRTYPE(CScript, CAmount) & s, vecSend) {
+    for (const PAIRTYPE(CScript, CAmount) & s : vecSend) {
         if (nValue < 0) {
             strFailReason = _("Transaction amounts must be positive");
             return false;
         }
         nValue += s.second;
     }
+
     if (vecSend.empty() || nValue < 0) {
         strFailReason = _("Transaction amounts must be positive");
         return false;
