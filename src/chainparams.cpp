@@ -66,12 +66,13 @@ static Checkpoints::MapCheckpoints mapCheckpoints =
         (692100, uint256("9d24cb4f32f74e83bf0edd2c6ef4719ba41f7004b7bf9a77f186fa787107490d"))
         (840000, uint256("b8028db08b3da8e853b217d96b563c2f3e264aec9254a10e6dfa48d2de9c0baf"))
         (1109000, uint256("20ca3808fb8536a600fcafe747ef25908db12e79c212b1bec9010157d691c9f0"))
-        (1200430, uint256("67b6af0c398435b8ff60ac0088cf0691d8da03a3eee628e3a301d7dd6c7cc17f"));
+        (1200430, uint256("67b6af0c398435b8ff60ac0088cf0691d8da03a3eee628e3a301d7dd6c7cc17f"))
+        (1322000, uint256("feecbd595d3963050d69dbb425d7b85d5658f50b62cc478af3b9ff3a7de372df"));
 
 static const Checkpoints::CCheckpointData data = {
     &mapCheckpoints,
-    1579601061, // * UNIX timestamp of last checkpoint block
-    6055920,    // * total number of transactions between genesis and last checkpoint
+    1586969630, // * UNIX timestamp of last checkpoint block
+    7244225,    // * total number of transactions between genesis and last checkpoint
                 //   (the tx=... number in the SetBestChain debug.log lines)
     2000        // * estimated number of transactions per day after checkpoint
 };
@@ -598,7 +599,7 @@ bool SelectParamsFromCommandLine()
 uint64_t GetBlockChainSize()
 {
     const uint64_t GB_BYTES = 1000000000LL;
-    return 2LL * GB_BYTES;
+    return 4LL * GB_BYTES;
 }
 
 bool VerifyGenesisBlock(const std::string& datadir, const uint256& genesisHash, std::string& err)
