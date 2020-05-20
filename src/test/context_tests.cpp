@@ -17,8 +17,8 @@ BOOST_AUTO_TEST_CASE(context_init_test)
 {
     BOOST_CHECK_THROW(GetContext(), runtime_error);
 
-    CreateContext();
-    BOOST_CHECK_THROW(CreateContext(), runtime_error);
+    CreateContext(0, nullptr);
+    BOOST_CHECK_THROW(CreateContext(0, nullptr), runtime_error);
 
     BOOST_CHECK(GetContext().GetAutoUpdateModel()->IsUpdateAvailable() == false);
 

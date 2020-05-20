@@ -136,11 +136,11 @@ PrivacyDialog::PrivacyDialog(QWidget* parent) : QDialog(parent),
     ui->WarningLabel->hide();    // Explanatory text visible in QT-Creator
     ui->dummyHideWidget->hide(); // Dummy widget with elements to hide
 
+    ui->pushButtonMintzPIV->setEnabled(false);
+    ui->pushButtonMintzPIV->setToolTip(tr("zCOLX minting is permanently disabled."));
+
     //temporary disable for maintenance
     if(GetAdjustedTime() > GetSporkValue(SPORK_20_ZEROCOIN_MAINTENANCE_MODE)) {
-        ui->pushButtonMintzPIV->setEnabled(false);
-        ui->pushButtonMintzPIV->setToolTip(tr("zCOLX is currently disabled due to maintenance."));
-
         ui->pushButtonSpendzPIV->setEnabled(false);
         ui->pushButtonSpendzPIV->setToolTip(tr("zCOLX is currently disabled due to maintenance."));
     }

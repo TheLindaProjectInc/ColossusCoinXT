@@ -19,6 +19,8 @@
 #include "net.h"
 #include "txdb.h" // for -dbcache defaults
 #include "util.h"
+#include "context.h"
+#include "configmodel.h"
 
 #ifdef ENABLE_WALLET
 #include "masternodeconfig.h"
@@ -82,7 +84,7 @@ void OptionsModel::Init()
 
     if (!settings.contains("fZeromintEnable"))
         settings.setValue("fZeromintEnable", true);
-    fEnableZeromint = settings.value("fZeromintEnable").toBool();
+    GetContext().GetConfigModel()->setZeromintEnabled(settings.value("fZeromintEnable").toBool());
 
     if (!settings.contains("nZeromintPercentage"))
         settings.setValue("nZeromintPercentage", 10);
@@ -166,8 +168,9 @@ void OptionsModel::Init()
     if (!SoftSetArg("-lang", settings.value("language").toString().toStdString()))
         addOverriddenOption("-lang");
 
-    if (settings.contains("fZeromintEnable"))
-        SoftSetBoolArg("-enablezeromint", settings.value("fZeromintEnable").toBool());
+    ConfigModelPtr config = GetContext().GetConfigModel();
+    if (settings.contains("fZeromintEnable") && !config->isZeromintInitialized())
+        config->setZeromintEnabled(settings.value("fZeromintEnable").toBool());
     if (settings.contains("nZeromintPercentage"))
         SoftSetArg("-zeromintpercentage", settings.value("nZeromintPercentage").toString().toStdString());
     if (settings.contains("nPreferredDenom"))
@@ -261,7 +264,7 @@ QVariant OptionsModel::data(const QModelIndex& index, int role) const
         case HideZeroBalances:
             return settings.value("fHideZeroBalances");
         case ZeromintEnable:
-            return QVariant(fEnableZeromint);
+            return QVariant(GetContext().GetConfigModel()->isZeromintEnabled());
         case ZeromintPercentage:
             return QVariant(nZeromintPercentage);
         case ZeromintPrefDenom:
@@ -382,9 +385,9 @@ bool OptionsModel::setData(const QModelIndex& index, const QVariant& value, int 
             }
             break;
         case ZeromintEnable:
-            fEnableZeromint = value.toBool();
-            settings.setValue("fZeromintEnable", fEnableZeromint);
-            emit zeromintEnableChanged(fEnableZeromint);
+            GetContext().GetConfigModel()->setZeromintEnabled(value.toBool());
+            settings.setValue("fZeromintEnable", value.toBool());
+            emit zeromintEnableChanged(value.toBool());
             break;
         case ZeromintPercentage:
             nZeromintPercentage = value.toInt();

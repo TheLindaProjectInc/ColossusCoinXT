@@ -23,6 +23,8 @@
 #include "validationinterface.h"
 #include "wallet_ismine.h"
 #include "walletdb.h"
+#include "context.h"
+#include "configmodel.h"
 
 #include <algorithm>
 #include <map>
@@ -317,7 +319,7 @@ public:
 
     bool isZeromintEnabled()
     {
-        return fEnableZeromint;
+        return GetContext().GetConfigModel()->isZeromintEnabled();
     }
 
     void setZPivAutoBackups(bool fEnabled)

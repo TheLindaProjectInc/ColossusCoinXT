@@ -68,12 +68,6 @@ bool AppInit(int argc, char* argv[])
 
     bool fRet = false;
 
-    //
-    // Parameters
-    //
-    // If Qt is used, parameters/colx.conf are parsed in qt/colx.cpp's main()
-    ParseParameters(argc, argv);
-
     // Process help and version before taking care about datadir
     if (mapArgs.count("-?") || mapArgs.count("-help") || mapArgs.count("-version")) {
         std::string strUsage = _("ColossusXT Core Daemon") + " " + _("version") + " " + FormatFullVersion() + "\n";
@@ -150,12 +144,6 @@ bool AppInit(int argc, char* argv[])
 #endif
         SoftSetBoolArg("-server", true);
 
-        // make auto-mint default to be 'false' for colxd (keep qt wallet w/ auto-mint on by default) 
-        if (!mapArgs.count("-enablezeromint")) {
-            SoftSetBoolArg("-enablezeromint", false);
-            LogPrintf("colxd EnableZeroMint default set to: 0 (false)\n");
-        }
-
         fRet = AppInit2(threadGroup, scheduler);
     } catch (std::exception& e) {
         PrintExceptionContinue(&e, "AppInit()");
@@ -179,7 +167,7 @@ bool AppInit(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     try {
-        ContextScopeInit context;
+        ContextScopeInit context(argc, argv);
 
         // Locale
         SetupEnvironment();

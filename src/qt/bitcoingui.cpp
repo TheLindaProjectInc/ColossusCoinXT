@@ -1259,14 +1259,19 @@ void BitcoinGUI::setAutoMintStatus()
     QString theme = GUIUtil::getThemeName();
 
     bool fZerocoinActive = chainActive.Height() >= Params().Zerocoin_StartHeight();
-    if (fEnableZeromint && fZerocoinActive) {
+    bool fZerocoinMaintenance = GetAdjustedTime() >= GetSporkValue(SPORK_20_ZEROCOIN_MAINTENANCE_MODE);
+    bool fEnableZeromint = GetContext().GetConfigModel()->isZeromintEnabled();
+    if (fEnableZeromint && fZerocoinActive && !fZerocoinMaintenance) {
         labelAutoMintIcon->show();
         labelAutoMintIcon->setIcon(QIcon(":/icons/" + theme + "/automint_active").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
         labelAutoMintIcon->setToolTip(tr("AutoMint is currently enabled and set to ") + QString::number(nZeromintPercentage) + "%.\n");
     } else {
         labelAutoMintIcon->show();
         labelAutoMintIcon->setIcon(QIcon(":/icons/" + theme + "/automint_inactive").pixmap(STATUSBAR_ICONSIZE, STATUSBAR_ICONSIZE));
-        labelAutoMintIcon->setToolTip(tr("AutoMint is disabled"));
+        if (fZerocoinMaintenance)
+            labelAutoMintIcon->setToolTip(tr("AutoMint is disabled due to maintenance."));
+        else
+            labelAutoMintIcon->setToolTip(tr("AutoMint is disabled"));
     }
 }
 

@@ -1886,9 +1886,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         }
     }
 
-    fEnableZeromint = GetBoolArg("-enablezeromint", true);
-    LogPrintf("EnableZeroMint is: %d\n", fEnableZeromint);
-
     nZeromintPercentage = GetArg("-zeromintpercentage", 10);
     if (nZeromintPercentage > 100) nZeromintPercentage = 100;
     if (nZeromintPercentage < 1) nZeromintPercentage = 1;
@@ -1901,17 +1898,6 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
 // XX42 Remove/refactor code below. Until then provide safe defaults
     nAnonymizePivxAmount = 2;
-
-//    nLiquidityProvider = GetArg("-liquidityprovider", 0); //0-100
-//    if (nLiquidityProvider != 0) {
-//        obfuScationPool.SetMinBlockSpacing(std::min(nLiquidityProvider, 100) * 15);
-//        fEnableZeromint = true;
-//        nZeromintPercentage = 99999;
-//    }
-//
-//    nAnonymizePivxAmount = GetArg("-anonymizepivxamount", 0);
-//    if (nAnonymizePivxAmount > 999999) nAnonymizePivxAmount = 999999;
-//    if (nAnonymizePivxAmount < 2) nAnonymizePivxAmount = 2;
 
     fEnableSwiftTX = GetBoolArg("-enableswifttx", fEnableSwiftTX);
     nSwiftTXDepth = GetArg("-swifttxdepth", nSwiftTXDepth);

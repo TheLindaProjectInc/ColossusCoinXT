@@ -12,6 +12,9 @@
 #include "swifttx.h"
 #include "ui_interface.h"
 #include "util.h"
+#include "context.h"
+#include "configmodel.h"
+
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -802,7 +805,7 @@ void CObfuscationPool::ChargeRandomFees()
 //
 void CObfuscationPool::CheckTimeout()
 {
-    if (!fEnableZeromint && !fMasterNode) return;
+    if (!GetContext().GetConfigModel()->isZeromintEnabled() && !fMasterNode) return;
 
     // catching hanging sessions
     if (!fMasterNode) {
@@ -887,7 +890,7 @@ void CObfuscationPool::CheckTimeout()
 //
 void CObfuscationPool::CheckForCompleteQueue()
 {
-    if (!fEnableZeromint && !fMasterNode) return;
+    if (!GetContext().GetConfigModel()->isZeromintEnabled() && !fMasterNode) return;
 
     /* Check to see if we're ready for submissions from clients */
     //
@@ -1146,7 +1149,7 @@ void CObfuscationPool::SendObfuscationDenominate(std::vector<CTxIn>& vin, std::v
     if (!CheckDiskSpace()) {
         UnlockCoins();
         SetNull();
-        fEnableZeromint = false;
+        GetContext().GetConfigModel()->setZeromintEnabled(false);
         LogPrintf("CObfuscationPool::SendObfuscationDenominate() - Not enough disk space, disabling Obfuscation.\n");
         return;
     }
@@ -1383,7 +1386,7 @@ bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
     // DRAGAN: being phased out
     return false;  // Disabled until Obfuscation is completely removed
 
-    if (!fEnableZeromint) return false;
+    if (!GetContext().GetConfigModel()->isZeromintEnabled()) return false;
     if (fMasterNode) return false;
     if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
     if (GetEntriesCount() > 0) {

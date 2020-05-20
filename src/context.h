@@ -16,16 +16,18 @@
 class CContext;
 class BootstrapModel;
 class AutoUpdateModel;
+class ConfigModel;
 
 typedef std::shared_ptr<BootstrapModel> BootstrapModelPtr;
 typedef std::shared_ptr<AutoUpdateModel> AutoUpdateModelPtr;
+typedef std::shared_ptr<ConfigModel> ConfigModelPtr;
 
 /**
  * Create and initialize unique global application context object.
  * Must be called from the main thread before any other thread started.
  * @throw runtime_error if context has already initialzied or any error occurs
  */
-void CreateContext();
+void CreateContext(int argc, char* argv[]);
 
 /**
  * Free resources allocated for context object.
@@ -46,7 +48,7 @@ CContext& GetContext();
  */
 struct ContextScopeInit
 {
-    ContextScopeInit() { CreateContext(); }
+    ContextScopeInit(int argc, char* argv[]) { CreateContext(argc, argv); }
 
     ~ContextScopeInit() { ReleaseContext(); }
 
@@ -62,6 +64,8 @@ private:
 class CContext
 {
 public:
+    CContext(int argc, char* argv[]);
+
     ~CContext();
 
     /**
@@ -85,6 +89,13 @@ public:
      * Model is created if not exists.
      */
     AutoUpdateModelPtr GetAutoUpdateModel();
+
+    /**
+     * Return unique instance of the config model.
+     * Model is responsible for accessing settings from cmd/.conf.
+     * Model is created at startup.
+     */
+    ConfigModelPtr GetConfigModel() const;
 
     /**
      * Add ColossusXT address to the ban list.
@@ -131,6 +142,7 @@ private:
     int64_t nStartupTime_ = 0;
     BootstrapModelPtr bootstrapModel_;
     AutoUpdateModelPtr autoupdateModel_;
+    ConfigModelPtr configModel_;
 
     mutable CCriticalSection csBanAddr_;
     std::set<std::string> banAddrMempool_;

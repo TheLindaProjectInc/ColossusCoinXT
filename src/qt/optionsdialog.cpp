@@ -146,6 +146,13 @@ OptionsDialog::OptionsDialog(QWidget* parent, bool enableWallet) : QDialog(paren
 
     /* setup/change UI elements when proxy IP is invalid/valid */
     connect(this, SIGNAL(proxyIpChecks(QValidatedLineEdit*, QLineEdit*)), this, SLOT(doProxyIpChecks(QValidatedLineEdit*, QLineEdit*)));
+
+    // disable zerocoin settings
+    ui->checkBoxZeromintEnable->setCheckState(Qt::Unchecked);
+    ui->checkBoxZeromintEnable->setToolTip(tr("ZCOLX is disabled."));
+    ui->checkBoxZeromintEnable->setEnabled(false);
+    ui->preferredDenom->setEnabled(false);
+    ui->zeromintPercentage->setEnabled(false);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -198,11 +205,10 @@ void OptionsDialog::setMapper()
     mapper->addMapping(ui->bitcoinAtStartup, OptionsModel::StartAtStartup);
     mapper->addMapping(ui->threadsScriptVerif, OptionsModel::ThreadsScriptVerif);
     mapper->addMapping(ui->databaseCache, OptionsModel::DatabaseCache);
-    // Zeromint Enabled
+
+    // ZCOLX
     mapper->addMapping(ui->checkBoxZeromintEnable, OptionsModel::ZeromintEnable);
-    // Zerocoin mint percentage
     mapper->addMapping(ui->zeromintPercentage, OptionsModel::ZeromintPercentage);
-    // Zerocoin preferred denomination
     mapper->addMapping(ui->preferredDenom, OptionsModel::ZeromintPrefDenom);
 
     /* Wallet */

@@ -5,6 +5,7 @@
 #include "context.h"
 #include "bootstrapmodel.h"
 #include "autoupdatemodel.h"
+#include "configmodel.h"
 #include "utilstrencodings.h"
 #include "timedata.h"
 #include "util.h"
@@ -16,12 +17,12 @@ using namespace std;
 
 static unique_ptr<CContext> context_;
 
-void CreateContext()
+void CreateContext(int argc, char* argv[])
 {
     if (context_)
         throw runtime_error("context has already been initialized, revise your code");
     else
-        context_.reset(new CContext);
+        context_.reset(new CContext(argc, argv));
 }
 
 void ReleaseContext()
@@ -37,7 +38,8 @@ CContext& GetContext()
         return *context_;
 }
 
-CContext::CContext()
+CContext::CContext(int argc, char* argv[]):
+    configModel_(new ConfigModel(argc, argv))
 {
     nStartupTime_ = GetAdjustedTime();
     banAddrConsensus_.insert(make_pair("DSesymccyAQr6LjGLCHsvHzE41uKMk86XS", 0)); // Cryptopia
@@ -71,6 +73,11 @@ AutoUpdateModelPtr CContext::GetAutoUpdateModel()
         autoupdateModel_.reset(new AutoUpdateModel);
 
     return autoupdateModel_;
+}
+
+ConfigModelPtr CContext::GetConfigModel() const
+{
+    return configModel_;
 }
 
 void CContext::AddAddressToBan(
