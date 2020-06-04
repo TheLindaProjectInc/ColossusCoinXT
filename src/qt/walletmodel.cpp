@@ -34,7 +34,8 @@ WalletModel::WalletModel(CWallet* wallet, OptionsModel* optionsModel, QObject* p
                                                                                          cachedBalance(0), cachedUnconfirmedBalance(0), cachedImmatureBalance(0),
                                                                                          cachedZerocoinBalance(0), cachedUnconfirmedZerocoinBalance(0), cachedImmatureZerocoinBalance(0),
                                                                                          cachedEncryptionStatus(Unencrypted),
-                                                                                         cachedNumBlocks(0)
+                                                                                         cachedNumBlocks(0),
+                                                                                         cachedObfuscationRounds(0)
 {
     fHaveWatchOnly = wallet->HaveWatchOnly();
     fHaveMultiSig = wallet->HaveMultiSig();
@@ -144,11 +145,17 @@ void WalletModel::pollBalanceChanged()
     if (!lockWallet)
         return;
 
-    if (fForceCheckBalanceChanged || chainActive.Height() != cachedNumBlocks || nZeromintPercentage != cachedZeromintPercentage || cachedTxLocks != nCompleteTXLocks) {
+    if (fForceCheckBalanceChanged ||
+            chainActive.Height() != cachedNumBlocks ||
+            nObfuscationRounds != cachedObfuscationRounds ||
+            nZeromintPercentage != cachedZeromintPercentage ||
+            cachedTxLocks != nCompleteTXLocks) {
+
         fForceCheckBalanceChanged = false;
 
         // Balance and number of transactions might have changed
         cachedNumBlocks = chainActive.Height();
+        cachedObfuscationRounds = nObfuscationRounds;
         cachedZeromintPercentage = nZeromintPercentage;
 
         checkBalanceChanged();

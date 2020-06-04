@@ -882,7 +882,7 @@ int CWallet::GetInputObfuscationRounds(CTxIn in) const
 {
     LOCK(cs_wallet);
     int realObfuscationRounds = GetRealInputObfuscationRounds(in, 0);
-    return realObfuscationRounds > nZeromintPercentage ? nZeromintPercentage : realObfuscationRounds;
+    return realObfuscationRounds > nObfuscationRounds ? nObfuscationRounds : realObfuscationRounds;
 }
 
 bool CWallet::IsDenominated(const CTxIn& txin) const
@@ -1113,7 +1113,7 @@ CAmount CWalletTx::GetAnonymizableCredit(bool fUseCache) const
         if (fMasterNode && vout[i].nValue == Params().GetRequiredMasternodeCollateral()) continue; // do not count MN-like outputs
 
         const int rounds = pwallet->GetInputObfuscationRounds(vin);
-        if (rounds >= -2 && rounds < nZeromintPercentage) {
+        if (rounds >= -2 && rounds < nObfuscationRounds) {
             nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
             if (!MoneyRange(nCredit))
                 throw std::runtime_error("CWalletTx::GetAnonamizableCredit() : value out of range");
@@ -1146,7 +1146,7 @@ CAmount CWalletTx::GetAnonymizedCredit(bool fUseCache) const
         if (pwallet->IsSpent(hashTx, i) || !pwallet->IsDenominated(vin)) continue;
 
         const int rounds = pwallet->GetInputObfuscationRounds(vin);
-        if (rounds >= nZeromintPercentage) {
+        if (rounds >= nObfuscationRounds) {
             nCredit += pwallet->GetCredit(txout, ISMINE_SPENDABLE);
             if (!MoneyRange(nCredit))
                 throw std::runtime_error("CWalletTx::GetAnonymizedCredit() : value out of range");
@@ -1857,7 +1857,7 @@ CAmount CWallet::GetNormalizedAnonymizedBalance() const
                 if (pcoin->GetDepthInMainChain() < 0) continue;
 
                 int rounds = GetInputObfuscationRounds(vin);
-                nTotal += pcoin->vout[i].nValue * rounds / nZeromintPercentage;
+                nTotal += pcoin->vout[i].nValue * rounds / nObfuscationRounds;
             }
         }
     }
@@ -2360,7 +2360,7 @@ bool CWallet::SelectCoins(const CAmount& nTargetValue, set<pair<const CWalletTx*
                 CTxIn vin = CTxIn(out.tx->GetHash(), out.i);
                 int rounds = GetInputObfuscationRounds(vin);
                 // make sure it's actually anonymized
-                if (rounds < nZeromintPercentage) continue;
+                if (rounds < nObfuscationRounds) continue;
             }
 
             nValueRet += out.tx->vout[out.i].nValue;
@@ -2383,7 +2383,7 @@ bool CWallet::SelectCoins(const CAmount& nTargetValue, set<pair<const CWalletTx*
                     CTxIn vin = CTxIn(out.tx->GetHash(), out.i);
                     int rounds = GetInputObfuscationRounds(vin);
                     // make sure it's actually anonymized
-                    if (rounds < nZeromintPercentage) continue;
+                    if (rounds < nObfuscationRounds) continue;
                     nValueRet += out.tx->vout[out.i].nValue;
                     setCoinsRet.insert(make_pair(out.tx, out.i));
                 }

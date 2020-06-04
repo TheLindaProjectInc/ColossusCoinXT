@@ -40,6 +40,8 @@ extern const int64_t AUTOMINT_DELAY;
 extern int nPreferredDenom;
 extern int nAnonymizePivxAmount;
 extern int nLiquidityProvider;
+extern bool fEnableObfuscation;
+extern int nObfuscationRounds;
 extern int64_t enforceMasternodePaymentsTime;
 extern std::string strMasterNodeAddr;
 extern int keysLoaded;

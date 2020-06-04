@@ -56,8 +56,6 @@ void SendMoney(const CTxDestination& address, CAmount nValue, CWalletTx& wtxNew,
 
 UniValue obfuscation(const UniValue& params, bool fHelp)
 {
-    throw runtime_error("Obfuscation is not supported any more. Use Zerocoin\n");
-
     if (fHelp || params.size() == 0)
         throw runtime_error(
             "obfuscation <colxaddress> <amount>\n"

@@ -1896,8 +1896,22 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
         nPreferredDenom = 0;
     }
 
-// XX42 Remove/refactor code below. Until then provide safe defaults
-    nAnonymizePivxAmount = 2;
+    fEnableObfuscation = GetBoolArg("-enableobfuscation", false);
+
+    nObfuscationRounds = GetArg("-obfuscationrounds", 2);
+    if (nObfuscationRounds > 16) nObfuscationRounds = 16;
+    if (nObfuscationRounds < 1) nObfuscationRounds = 1;
+
+    nLiquidityProvider = GetArg("-liquidityprovider", 0); //0-100
+    if (nLiquidityProvider != 0) {
+        obfuScationPool.SetMinBlockSpacing(std::min(nLiquidityProvider, 100) * 15);
+        fEnableObfuscation = true;
+        nObfuscationRounds = 99999;
+    }
+
+    nAnonymizePivxAmount = GetArg("-anonymizecolxamount", 0);
+    if (nAnonymizePivxAmount > 999999) nAnonymizePivxAmount = 999999;
+    if (nAnonymizePivxAmount < 2) nAnonymizePivxAmount = 2;
 
     fEnableSwiftTX = GetBoolArg("-enableswifttx", fEnableSwiftTX);
     nSwiftTXDepth = GetArg("-swifttxdepth", nSwiftTXDepth);
@@ -1911,6 +1925,7 @@ bool AppInit2(boost::thread_group& threadGroup, CScheduler& scheduler)
 
     LogPrintf("fLiteMode %d\n", fLiteMode);
     LogPrintf("nSwiftTXDepth %d\n", nSwiftTXDepth);
+    LogPrintf("Obfuscation rounds %d\n", nObfuscationRounds);
     LogPrintf("Anonymize COLX Amount %d\n", nAnonymizePivxAmount);
     LogPrintf("Budget Mode %s\n", strBudgetMode.c_str());
 

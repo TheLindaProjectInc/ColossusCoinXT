@@ -246,6 +246,7 @@ private:
     int cachedNumBlocks;
     int cachedTxLocks;
     int cachedZeromintPercentage;
+    int cachedObfuscationRounds;
 
     QTimer* pollTimer;
 
