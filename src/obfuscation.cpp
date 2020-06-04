@@ -1380,9 +1380,21 @@ void CObfuscationPool::ClearLastMessage()
 //
 bool CObfuscationPool::DoAutomaticDenominating(bool fDryRun)
 {
-    if (!fEnableObfuscation) return false;
-    if (fMasterNode) return false;
-    if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) return false;
+    if (!fEnableObfuscation) {
+        strAutoDenomResult = _("Obfuscation disabled.");
+        return false;
+    }
+
+    if (fMasterNode) {
+        strAutoDenomResult = _("Obfuscation disabled on masternode.");
+        return false;
+    }
+
+    if (state == POOL_STATUS_ERROR || state == POOL_STATUS_SUCCESS) {
+        strAutoDenomResult = strprintf("Pool status is %d", state);
+        return false;
+    }
+
     if (GetEntriesCount() > 0) {
         strAutoDenomResult = _("Mixing in progress...");
         return false;
