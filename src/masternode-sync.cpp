@@ -18,6 +18,7 @@
 
 class CMasternodeSync;
 CMasternodeSync masternodeSync;
+static bool fBlockchainSynced = false;
 
 CMasternodeSync::CMasternodeSync()
 {
@@ -29,9 +30,13 @@ bool CMasternodeSync::IsSynced()
     return RequestedMasternodeAssets == MASTERNODE_SYNC_FINISHED;
 }
 
+void CMasternodeSync::SetBlockchainSynced()
+{
+    fBlockchainSynced = true;
+}
+
 bool CMasternodeSync::IsBlockchainSynced()
 {
-    static bool fBlockchainSynced = false;
     static int64_t lastProcess = GetTime();
 
     // if the last call to this function was more than 60 minutes ago (client was in sleep mode) reset the sync process

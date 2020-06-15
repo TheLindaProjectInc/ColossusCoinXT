@@ -170,7 +170,7 @@ UniValue mnsync(const UniValue& params, bool fHelp)
     if (params.size() == 1)
         strMode = params[0].get_str();
 
-    if (fHelp || params.size() != 1 || (strMode != "status" && strMode != "reset")) {
+    if (fHelp || params.size() != 1 || (strMode != "status" && strMode != "reset" && strMode != "force")) {
         throw runtime_error(
             "mnsync \"status|reset\"\n"
             "\nReturns the sync status or resets sync.\n"
@@ -231,6 +231,16 @@ UniValue mnsync(const UniValue& params, bool fHelp)
         masternodeSync.Reset();
         return "success";
     }
+
+
+    if (strMode == "force") {
+        masternodeSync.lastMasternodeWinner = 1;
+        masternodeSync.lastMasternodeList = 1;
+        masternodeSync.lastBudgetItem = 1;
+        masternodeSync.SetBlockchainSynced();
+        return "success";
+    }
+
     return "failure";
 }
 
