@@ -1,18 +1,26 @@
 #!/bin/bash
 
-set -e
+copy_log()
+{
+  if [[ -e 'gitian-builder/var/build.log' ]]
+  then
+    mv -f gitian-builder/var/build.log gitian-builder/var/build_$1.log
+  fi
 
-export NAME=satoshi
-export BRANCH=dev
+  if [[ -e 'gitian-builder/var/install.log' ]]
+  then
+    mv -f gitian-builder/var/install.log gitian-builder/var/install_$1.log
+  fi
+}
 
-if [[ ! -e 'gitian-builder/inputs/MacOSX10.11.sdk.tar.gz' ]]
-then
-    echo 'Downloading MacOS sdk...'
-    mkdir -p gitian-builder/inputs
-    wget -N -P gitian-builder/inputs https://github.com/phracker/MacOSX-SDKs/releases/download/10.13/MacOSX10.11.sdk.tar.xz
-    mv gitian-builder/inputs/MacOSX10.11.sdk.tar.xz gitian-builder/inputs/MacOSX10.11.sdk.tar.gz
-else
-    echo 'MacOS SDK is up to date.'
-fi
+chmod +x gitian_win.sh
+./gitian_win.sh
+copy_log "win"
 
-python3 gitian-build.py --docker -b -c --detach-sign $NAME $BRANCH
+chmod +x gitian_mac.sh
+./gitian_mac.sh
+copy_log "mac"
+
+chmod +x gitian_linux.sh
+./gitian_linux.sh
+copy_log "linux"

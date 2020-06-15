@@ -15,4 +15,5 @@ else
     echo 'MacOS SDK is up to date.'
 fi
 
+git -C gitian-builder checkout .
 python3 gitian-build.py --docker -b -c -o m --detach-sign $NAME $BRANCH
