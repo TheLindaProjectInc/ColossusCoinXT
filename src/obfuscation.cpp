@@ -74,6 +74,7 @@ void CObfuscationPool::ProcessMessageObfuscation(CNode* pfrom, std::string& strC
 
         CMasternode* pmn = mnodeman.Find(activeMasternode.vin);
         if (pmn == NULL) {
+            LogPrintf("dsa -- Masternode %s not in list (enabled=%d)\n", activeMasternode.vin.ToString(), mnodeman.CountEnabled());
             errorID = ERR_MN_LIST;
             pfrom->PushMessage("dssu", sessionID, GetState(), GetEntriesCount(), MASTERNODE_REJECTED, errorID);
             return;
