@@ -16,4 +16,5 @@ else
 fi
 
 git -C gitian-builder checkout .
+git -C ColossusCoinXT pull
 python3 gitian-build.py --docker -b -c -o m --detach-sign $NAME $BRANCH

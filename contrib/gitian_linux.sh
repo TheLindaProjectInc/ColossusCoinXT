@@ -6,6 +6,7 @@ export NAME=satoshi
 export BRANCH=dev
 
 git -C gitian-builder checkout .
+git -C ColossusCoinXT pull
 
 echo '' >> gitian-builder/target-bin/grab-packages.sh
 echo 'update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 7 ' >> gitian-builder/target-bin/grab-packages.sh
