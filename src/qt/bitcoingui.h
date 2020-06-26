@@ -111,6 +111,7 @@ private:
     QAction* aboutAction = nullptr;
     QAction* receiveCoinsAction = nullptr;
     QAction* privacyAction = nullptr;
+    QAction* obfuscationAction = nullptr;
     QAction* optionsAction = nullptr;
     QAction* toggleHideAction = nullptr;
     QAction* encryptWalletAction = nullptr;
@@ -218,6 +219,7 @@ private slots:
     void gotoReceiveCoinsPage();
     /** Switch to receive coins page */
     void gotoPrivacyPage();
+    void gotoObfuscationPage();
     /** Switch to send coins page */
     void gotoSendCoinsPage(QString addr = "");
 

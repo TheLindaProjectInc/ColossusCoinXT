@@ -17,6 +17,7 @@
 #include "overviewpage.h"
 #include "receivecoinsdialog.h"
 #include "privacydialog.h"
+#include "obfuscationdialog.h"
 #include "sendcoinsdialog.h"
 #include "signverifymessagedialog.h"
 #include "transactiontablemodel.h"
@@ -116,12 +117,14 @@ WalletView::WalletView(QWidget* parent) : QStackedWidget(parent)
     transactionsPage->setLayout(vbox);
 
     privacyPage = new PrivacyDialog();
+    obfuscationPage = new ObfuscationDialog();
     receiveCoinsPage = new ReceiveCoinsDialog();
     sendCoinsPage = new SendCoinsDialog();
 
     addWidget(overviewPage);
     addWidget(transactionsPage);
     addWidget(privacyPage);
+    addWidget(obfuscationPage);
     addWidget(receiveCoinsPage);
     addWidget(sendCoinsPage);
     addWidget(explorerWindow);
@@ -287,6 +290,11 @@ void WalletView::gotoPrivacyPage()
     setCurrentWidget(privacyPage);
     // Refresh UI-elements in case coins were locked/unlocked in CoinControl
     walletModel->emitBalanceChanged();
+}
+
+void WalletView::gotoObfuscationPage()
+{
+    setCurrentWidget(obfuscationPage);
 }
 
 void WalletView::gotoSendCoinsPage(QString addr)

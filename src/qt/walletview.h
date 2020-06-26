@@ -15,6 +15,7 @@ class ClientModel;
 class OverviewPage;
 class ReceiveCoinsDialog;
 class PrivacyDialog;
+class ObfuscationDialog;
 class SendCoinsDialog;
 class SendCoinsRecipient;
 class TransactionView;
@@ -66,6 +67,7 @@ private:
     QWidget* transactionsPage = nullptr;
     ReceiveCoinsDialog* receiveCoinsPage = nullptr;
     PrivacyDialog* privacyPage = nullptr;
+    ObfuscationDialog* obfuscationPage = nullptr;
     SendCoinsDialog* sendCoinsPage = nullptr;
     BlockExplorer* explorerWindow = nullptr;
     MasternodeList* masternodeListPage = nullptr;
@@ -89,6 +91,8 @@ public slots:
     void gotoBlockExplorerPage();
     /** Switch to privacy page */
     void gotoPrivacyPage();
+    /** Switch to privacy page */
+    void gotoObfuscationPage();
     /** Switch to receive coins page */
     void gotoReceiveCoinsPage();
     /** Switch to send coins page */

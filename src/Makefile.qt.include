@@ -91,6 +91,7 @@ QT_MOC_CPP = \
   qt/moc_multisenddialog.cpp \
   qt/moc_multisigdialog.cpp\
   qt/moc_notificator.cpp \
+  qt/moc_obfuscationdialog.cpp \
   qt/moc_openuridialog.cpp \
   qt/moc_optionsdialog.cpp \
   qt/moc_optionsmodel.cpp \
@@ -172,6 +173,7 @@ BITCOIN_QT_H = \
   qt/multisigdialog.h\
   qt/networkstyle.h \
   qt/notificator.h \
+  qt/obfuscationdialog.h \
   qt/openuridialog.h \
   qt/optionsdialog.h \
   qt/optionsmodel.h \
@@ -389,6 +391,7 @@ BITCOIN_QT_CPP += \
   qt/masternodeentrydialog.cpp \
   qt/multisenddialog.cpp \
   qt/multisigdialog.cpp\
+  qt/obfuscationdialog.cpp \
   qt/openuridialog.cpp \
   qt/overviewpage.cpp \
   qt/paymentrequestplus.cpp \

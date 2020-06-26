@@ -120,6 +120,7 @@ BITCOIN_CORE_H = \
   curl.h \
   denomination_functions.h \
   obfuscation.h \
+  obfuscationmodel.h \
   obfuscation-relay.h \
   db.h \
   eccryptoverify.h \
@@ -254,6 +255,7 @@ libbitcoin_wallet_a_SOURCES = \
   activemasternode.cpp \
   bip38.cpp \
   denomination_functions.cpp \
+  obfuscationmodel.cpp \
   obfuscation.cpp \
   obfuscation-relay.cpp \
   db.cpp \

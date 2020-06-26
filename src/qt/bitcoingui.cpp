@@ -97,6 +97,7 @@ BitcoinGUI::BitcoinGUI(const NetworkStyle* networkStyle, QWidget* parent) : QMai
                                                                             aboutAction(0),
                                                                             receiveCoinsAction(0),
                                                                             privacyAction(0),
+                                                                            obfuscationAction(0),
                                                                             optionsAction(0),
                                                                             toggleHideAction(0),
                                                                             encryptWalletAction(0),
@@ -376,6 +377,12 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
 #endif
     tabGroup->addAction(privacyAction);
 
+    obfuscationAction = new QAction(QIcon(":/icons/" + theme + "/privacy"), tr("&Obfuscation"), this);
+    obfuscationAction->setStatusTip(tr("Obfuscation Actions for COLX"));
+    obfuscationAction->setToolTip(obfuscationAction->statusTip());
+    obfuscationAction->setCheckable(true);
+    tabGroup->addAction(obfuscationAction);
+
 #ifdef ENABLE_WALLET
 
     QVariant showMNTab = OptionsModel::GetOption(OptionsModel::ShowMasternodesTab);
@@ -416,6 +423,8 @@ void BitcoinGUI::createActions(const NetworkStyle* networkStyle)
     connect(receiveCoinsAction, SIGNAL(triggered()), this, SLOT(gotoReceiveCoinsPage()));
     connect(privacyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(privacyAction, SIGNAL(triggered()), this, SLOT(gotoPrivacyPage()));
+    connect(obfuscationAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
+    connect(obfuscationAction, SIGNAL(triggered()), this, SLOT(gotoObfuscationPage()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
 #endif // ENABLE_WALLET
@@ -608,8 +617,8 @@ void BitcoinGUI::createToolBars()
         toolbar->addAction(sendCoinsAction);
         toolbar->addAction(receiveCoinsAction);
         toolbar->addAction(privacyAction);
+        toolbar->addAction(obfuscationAction);
         toolbar->addAction(historyAction);
-        toolbar->addAction(privacyAction);
 
         if (masternodeAction)
             toolbar->addAction(masternodeAction);
@@ -721,6 +730,7 @@ void BitcoinGUI::setWalletActionsEnabled(bool enabled)
     sendCoinsAction->setEnabled(enabled);
     receiveCoinsAction->setEnabled(enabled);
     privacyAction->setEnabled(enabled);
+    obfuscationAction->setEnabled(enabled);
     historyAction->setEnabled(enabled);
 
     if (masternodeAction)
@@ -781,6 +791,7 @@ void BitcoinGUI::createTrayIconMenu()
     trayIconMenu->addAction(sendCoinsAction);
     trayIconMenu->addAction(receiveCoinsAction);
     trayIconMenu->addAction(privacyAction);
+    trayIconMenu->addAction(obfuscationAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(signMessageAction);
     trayIconMenu->addAction(verifyMessageAction);
@@ -890,6 +901,12 @@ void BitcoinGUI::gotoPrivacyPage()
 {
     privacyAction->setChecked(true);
     if (walletFrame) walletFrame->gotoPrivacyPage();
+}
+
+void BitcoinGUI::gotoObfuscationPage()
+{
+    obfuscationAction->setChecked(true);
+    if (walletFrame) walletFrame->gotoObfuscationPage();
 }
 
 void BitcoinGUI::gotoSendCoinsPage(QString addr)
