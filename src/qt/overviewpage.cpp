@@ -29,12 +29,16 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 #define DECORATION_SIZE 48
 #define ICON_OFFSET 16
 #define NUM_ITEMS 9
 
 extern CWallet* pwalletMain;
+static const char *NEWSURL = "https://colossusxt.io/wallettab/";
 
 class TxViewDelegate : public QAbstractItemDelegate
 {
@@ -157,6 +161,14 @@ OverviewPage::OverviewPage(QWidget* parent) : QWidget(parent),
 
     // start with displaying the "out of sync" warnings
     showOutOfSyncWarning(true);
+
+    // check for news
+    timerNews.reset(new QTimer(this));
+    connect(timerNews.get(), SIGNAL(timeout()), this, SLOT(downloadNewsRequest()));
+    timerNews->start(12 * 60 * 60 * 1000); // download every 12 hours
+
+    // download now
+    downloadNewsRequest();
 }
 
 void OverviewPage::handleTransactionClicked(const QModelIndex& index)
@@ -409,6 +421,12 @@ void OverviewPage::updateAlerts(const QString& warnings)
     if (!this->newVersionNotification.isEmpty())
         alertList << this->newVersionNotification;
 
+    bool showAnnouncement = !strNewsDate.isEmpty();
+    if (walletModel && walletModel->getOptionsModel())
+        showAnnouncement = strNewsDate != walletModel->getOptionsModel()->getNewsDismissDate();
+    if (showAnnouncement)
+        alertList << "New announcement! <a href=\"AnnouncementOpen\">Open</a> or <a href=\"AnnouncementDismiss\">Dismiss</a>";
+
     this->ui->labelAlerts->setVisible(!alertList.isEmpty());
     this->ui->labelAlerts->setText(alertList.join("<br>"));
 }
@@ -460,8 +478,6 @@ void OverviewPage::updateNewVersionDownloadProgress(const QString& msg, int nPro
 
 void OverviewPage::alertLinkActivated(const QString& link)
 {
-    assert(GetContext().GetAutoUpdateModel()->IsUpdateAvailable());
-
     if (link == "Go")
         GUIUtil::openURL(QString::fromStdString(GetContext().GetAutoUpdateModel()->GetUpdateUrlTag()));
     else if (link == "Download") {
@@ -475,6 +491,14 @@ void OverviewPage::alertLinkActivated(const QString& link)
             GUIUtil::openFileInDefaultApp(QString::fromStdString(localPath));
         } else
             QMessageBox::warning(this, QString::fromStdString(CLIENT_NAME), tr("Local file was not found."), QMessageBox::Ok, QMessageBox::Ok);
+    } else if (link == "AnnouncementOpen") {
+        GUIUtil::openURL(NEWSURL);
+    } else if (link == "AnnouncementDismiss") {
+        if (walletModel && walletModel->getOptionsModel()) {
+            walletModel->getOptionsModel()->setNewsDismissDate(strNewsDate);
+            if (this->clientModel) // if not here will be updated in setModel
+                updateAlerts(this->clientModel->getStatusBarWarnings());
+        }
     }
     else
         assert(false); // unexpected link
@@ -484,4 +508,47 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
 {
     ui->labelWalletStatus->setVisible(fShow);
     ui->labelTransactionsStatus->setVisible(fShow);
+}
+
+void OverviewPage::downloadNewsRequest()
+{
+    if (!network) {
+        network.reset(new QNetworkAccessManager);
+        connect(network.get(), SIGNAL (finished(QNetworkReply*)), this, SLOT (newsDownloaded(QNetworkReply*)));
+    }
+
+    const QUrl qurl(NEWSURL);
+    QNetworkRequest request(qurl);
+    network->get(request);
+}
+
+void OverviewPage::newsDownloaded(QNetworkReply *reply)
+{
+    if (reply == nullptr) {
+        LogPrintf("%s, reply is nullptr\n", __FUNCTION__);
+        return;
+    }
+
+    reply->deleteLater();
+    if (reply->error() != QNetworkReply::NoError)
+        LogPrintf("%s, reply status=%d\n", __FUNCTION__, reply->error());
+
+    QByteArray data = reply->readAll();
+
+    // try to find last update date of the page
+    const std::string pattern = "Last Update: ";
+    int pos = data.indexOf(pattern.c_str());
+    if (pos >= 0 && pos < data.size())
+    {
+        const int DATESTRSIZE = 10;
+        QByteArray lastUpdate = data.mid(pos + pattern.size(), DATESTRSIZE);
+        if (lastUpdate.size() == DATESTRSIZE) {
+            strNewsDate = QString::fromUtf8(lastUpdate);
+            LogPrintf("%s, last updated date=%s\n", __FUNCTION__, strNewsDate.toStdString());
+
+            if (this->clientModel) // if not here will be updated in setModel
+                updateAlerts(this->clientModel->getStatusBarWarnings());
+        } else; // should never happen
+    } else
+        LogPrintf("%s, last update date was not found on the page %s\n", __FUNCTION__, NEWSURL);
 }
