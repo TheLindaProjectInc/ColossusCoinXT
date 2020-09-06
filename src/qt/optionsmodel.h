@@ -98,6 +98,9 @@ public:
     bool isRestartRequired();
     bool resetSettings;
 
+    QString getNewsDismissDate() const;
+    void setNewsDismissDate(const QString& str);
+
 private:
     /* Qt-only settings */
     bool fMinimizeToTray;
@@ -109,6 +112,7 @@ private:
     bool fHideZeroBalances;
     /* settings that were overriden by command-line */
     QString strOverriddenByCommandLine;
+    QString strNewsDismissDate;
 
     /// Add option to list of GUI options overridden through command line/config file
     void addOverriddenOption(const std::string& option);

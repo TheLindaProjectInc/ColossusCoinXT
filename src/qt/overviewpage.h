@@ -8,6 +8,7 @@
 #include "amount.h"
 
 #include <QWidget>
+#include <memory>
 
 class ClientModel;
 class TransactionFilterProxy;
@@ -21,6 +22,8 @@ class OverviewPage;
 
 QT_BEGIN_NAMESPACE
 class QModelIndex;
+class QNetworkReply;
+class QNetworkAccessManager;
 QT_END_NAMESPACE
 
 /** Overview ("home") page widget */
@@ -46,10 +49,9 @@ signals:
     void transactionClicked(const QModelIndex& index);
 
 private:
-    QTimer* timer;
-    Ui::OverviewPage* ui;
-    ClientModel* clientModel;
-    WalletModel* walletModel;
+    Ui::OverviewPage* ui = nullptr;
+    ClientModel* clientModel = nullptr;
+    WalletModel* walletModel = nullptr;
     CAmount currentBalance;
     CAmount currentUnconfirmedBalance;
     CAmount currentImmatureBalance;
@@ -66,6 +68,10 @@ private:
     TxViewDelegate* txdelegate;
     TransactionFilterProxy* filter;
 
+    QString strNewsDate;
+    std::unique_ptr<QTimer> timerNews;
+    std::unique_ptr<QNetworkAccessManager> network;
+
 private slots:
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex& index);
@@ -73,6 +79,9 @@ private slots:
     void updateWatchOnlyLabels(bool showWatchOnly);
     void updateNewVersionAvailability();
     void updateNewVersionDownloadProgress(const QString& msg, int nProgress);
+
+    void downloadNewsRequest();
+    void newsDownloaded(QNetworkReply *reply);
 };
 
 #endif // BITCOIN_QT_OVERVIEWPAGE_H

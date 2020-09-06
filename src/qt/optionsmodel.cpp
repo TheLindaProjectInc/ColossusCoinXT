@@ -522,3 +522,18 @@ QVariant OptionsModel::GetOption(OptionID id)
         return settings.value(name);
     }
 }
+
+QString OptionsModel::getNewsDismissDate() const
+{
+    QSettings settings;
+    if (settings.contains("NewsDismissDate"))
+        return settings.value("NewsDismissDate").toString();
+    else
+        return QString();
+}
+
+void OptionsModel::setNewsDismissDate(const QString& str)
+{
+    QSettings settings;
+    settings.setValue("NewsDismissDate", str);
+}
