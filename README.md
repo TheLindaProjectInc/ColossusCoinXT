@@ -7,8 +7,8 @@ COLX Core integration/staging repository
 <a href="https://discordapp.com/invite/pRbDzPd">
   <img src="https://img.shields.io/discord/380069131829116928?logo=discord" alt="chat on Discord">
 </a>
-<a href="https://github.com/ColossusCoinXT/ColossusCoinXT/releases/tag/v1.2.3">
-  <img src="https://img.shields.io/badge/version-1.2.3-green" alt="v1.2.3">
+<a href="https://github.com/ColossusCoinXT/ColossusCoinXT/releases/tag/v1.2.4">
+  <img src="https://img.shields.io/badge/version-1.2.4-green" alt="v1.2.4">
 </a>
 
 COLX is a cutting edge cryptocurrency, with many features not available in most other cryptocurrencies.
@@ -32,17 +32,8 @@ ColossusXT is an open source, peer-to-peer, energy-saving, community driven, dec
 
 https://bitcointalk.org/index.php?topic=2141880.0
 
-### ColossusXT $COLX Roadmap 2020+
-ColossusXT is built on the strengths of our diverse community.
-After a year of achievements on our 2019 roadmap, we're excited to announce 
-our Roadmap for Year 2020+ and look forward to your questions & feedback while
-we continue to expand throughout 2020.
-
-$COLX Website Version of our Roadmap for Year 2020
-https://colossusxt.io/roadmap/
-
 A Bright Future: ColossusXT has many new & exciting projects underway to be released 
-throughout 2020+ to increase COLX utility and new user adoption across the globe.
+throughout 2021+ to increase COLX utility and new user adoption across the globe.
 
 ### Blockchain Explorer:
 
