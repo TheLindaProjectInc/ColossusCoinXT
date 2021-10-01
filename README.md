@@ -55,9 +55,9 @@ Forums: https://forum.colossusxt.io/
 
 
 Terms of Service:
-https://colossusxt.io/2018/01/colx-terms-of-service-tos/
+https://www.colossusxt.io/terms-of-service/
 ColossusXT software is an experimental software. There is no guarantee given here.
 Use it at your own risk and please do your due diligence when investing.
 
 ### ColossusXT – Extremely resource friendly | Lightning fast | Stealth Anonymous 
-![](https://i.imgur.com/NnR0Y18.png) 
+![ColossusXT](https://i.imgur.com/NnR0Y18.png) 
